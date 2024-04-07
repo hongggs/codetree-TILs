@@ -142,6 +142,9 @@ public class Main{
                     double dist = getDist(r, c, nr, nc);
                     if(0 <= nr && nr < N && 0 <= nc && nc < N && min > dist) {
                         for(int a = 0;  a < P; a++) {
+                            if(a == i) {
+                               continue;
+                            }
                             if(nr == santas[a][0] && nc == santas[a][1]) {
                                 continue flag;
                             }
@@ -195,6 +198,9 @@ public class Main{
 
     static void interact(int index, int r, int c, int d) {
         for(int i = 0; i < P; i++) {
+            if(index == i) {
+                continue;
+            }
             if(santas[i][2] == 2) {
                 continue;
             }
