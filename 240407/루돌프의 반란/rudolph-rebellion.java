@@ -145,7 +145,7 @@ public class Main{
                             if(a == i) {
                                continue;
                             }
-                            if(nr == santas[a][0] && nc == santas[a][1]) {
+                            if(santas[a][2] != 2 && nr == santas[a][0] && nc == santas[a][1]) {
                                 continue flag;
                             }
                         }
@@ -198,10 +198,7 @@ public class Main{
 
     static void interact(int index, int r, int c, int d) {
         for(int i = 0; i < P; i++) {
-            if(index == i) {
-                continue;
-            }
-            if(santas[i][2] == 2) {
+            if(index == i || santas[i][2] == 2) {
                 continue;
             }
             if(santas[i][0] == r && santas[i][1] == c) {
