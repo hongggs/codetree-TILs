@@ -20,7 +20,6 @@ public class Main {
             step = 2;
             flag = false;
         }
-
         void move_front() {
             r = r + dr[d];
             c = c + dc[d];
@@ -70,6 +69,7 @@ public class Main {
                 goal = 1;
                 step = 2;
                 now = 0;
+                d = 0;
             }
         }
     }
@@ -122,6 +122,9 @@ public class Main {
         while(t <= K) {
             //1.도망자 이동
             for(int i = 0; i < M; i++) {
+                if(runners[i].r == -1) {
+                    continue;
+                }
                 if(getDist(seeker.r, seeker.c, runners[i].r, runners[i].c) > 3) {
                     continue;
                 }
@@ -167,13 +170,16 @@ public class Main {
                 int nc = seeker.c + (dc[seeker.d] * s);
                 if(0 <= nr && nr < N && 0 <= nc && nc < N && map[nr][nc] != 1) {
                     for(int j = 0; j < M; j++) {
+                        if(runners[j].r == -1) {
+                            continue;
+                        }
                         if(nr == runners[j].r && nc == runners[j].c) {
                             cnt++;
+                            runners[j].r = -1;
                         }
                     }
                 }
             }
-
             ans += (cnt * t);
             t++;
         }
