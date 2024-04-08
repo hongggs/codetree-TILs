@@ -59,6 +59,9 @@ public class Main {
 			st = new StringTokenizer(br.readLine());
 			int index = Integer.parseInt(st.nextToken());
 			int d = Integer.parseInt(st.nextToken());
+			if(soldiers[index].k <= 0) {
+				continue;
+			}
 			mark();
 			v = new boolean[N + 1];
 			v[index] = true;
