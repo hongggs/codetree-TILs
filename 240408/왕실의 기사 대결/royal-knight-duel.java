@@ -13,12 +13,19 @@ public class Main {
 		int r, c, h, w, k;
 
 		public Soldier(int r, int c, int h, int w, int k) {
+			super();
 			this.r = r;
 			this.c = c;
 			this.h = h;
 			this.w = w;
 			this.k = k;
 		}
+
+		@Override
+		public String toString() {
+			return "Soldier [r=" + r + ", c=" + c + ", h=" + h + ", w=" + w + ", k=" + k + "]";
+		}
+		
 	}
 	public static void main(String[] args) throws Exception{
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -53,6 +60,7 @@ public class Main {
 			int index = Integer.parseInt(st.nextToken());
 			int d = Integer.parseInt(st.nextToken());
 			mark();
+			v = new boolean[N + 1];
 			v[index] = true;
 			if(canMove(index, d)) {
 				soldiers[index].r = soldiers[index].r + dr[d];
@@ -63,7 +71,6 @@ public class Main {
 						soldiers[j].r = soldiers[j].r + dr[d];
 						soldiers[j].c = soldiers[j].c + dc[d];
 						soldiers[j].k -= getDamage(j);
-						v[j] = false;
 					}
 				}
 			}
