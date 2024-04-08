@@ -76,6 +76,9 @@ public class Main {
 				if(customers.get(i).time > t) {
 					break;
 				}
+				if(sushiMap.get(now.name) == null) {
+					continue;
+				}
 				for(int j = sushiMap.get(now.name).size() - 1; j >= 0; j--) {
 					Sushi s = sushiMap.get(now.name).get(j);
 					int loc = (s.x + (t - s.time)) % L;
