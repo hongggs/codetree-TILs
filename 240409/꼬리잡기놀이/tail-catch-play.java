@@ -69,9 +69,9 @@ public class Main {
 			//2. 공 던지기
 			//4. 머리사람 꼬리사람 변경
 			v = new boolean[N][N];
-			int x = t % (N - 1);
+			int x = t % N;
 			int score = 0;
-			switch((t / (N - 1)) % 4) {
+			switch((t / N) % 4) {
 			case 0:
 				for(int i = 0; i < N; i++) {
 					if(0 < map[x][i]  && map[x][i] < 4) {
@@ -96,14 +96,14 @@ public class Main {
 							teams[teamMap[i][x] - 1].canMoveHead = false;
 						} else {
 							score = getScore(i, x, 3);
-							teams[teamMap[i][x] - 1].canMoveHead = false;
+							teams[teamMap[i][x] - 1].canMoveHead = true;
 						}
 						break;
 					}
 				}
 				break;
 			case 2:
-				x = N - x;
+				x = N - x - 1;
 				for(int i = N - 1; i >= 0; i--) {
 					if(0 < map[x][i]  && map[x][i] < 4) {
 						v[x][i] = true;
@@ -119,7 +119,7 @@ public class Main {
 				}
 				break;
 			case 3:
-				x = N - x;
+				x = N - x - 1;
 				for(int i = 0; i < N; i++) {
 					if(0 < map[i][x] && map[i][x] < 4) {
 						v[i][x] = true;
@@ -128,7 +128,7 @@ public class Main {
 							teams[teamMap[i][x]].canMoveHead = false;
 						} else {
 							score = getScore(i, x, 3);
-							teams[teamMap[i][x] - 1].canMoveHead = false;
+							teams[teamMap[i][x] - 1].canMoveHead = true;
 						}
 						break;
 					}
