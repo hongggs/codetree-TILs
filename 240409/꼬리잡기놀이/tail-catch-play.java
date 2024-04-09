@@ -68,21 +68,13 @@ public class Main {
 			}
 			//2. 공 던지기
 			//4. 머리사람 꼬리사람 변경
-			v = new boolean[N][N];
 			int x = t % N;
 			int score = 0;
 			switch((t / N) % 4) {
 			case 0:
 				for(int i = 0; i < N; i++) {
 					if(0 < map[x][i]  && map[x][i] < 4) {
-						v[x][i] = true;
-						if(teams[teamMap[x][i] - 1].canMoveHead) {
-							score = getScore(x, i, 1);
-							teams[teamMap[x][i] - 1].canMoveHead = false;
-						} else {
-							score = getScore(x, i, 3);
-							teams[teamMap[x][i] - 1].canMoveHead = true;
-						}
+						score = getScore(x, i, teamMap[x][i] - 1);
 						break;
 					}
 				}
@@ -90,14 +82,7 @@ public class Main {
 			case 1:
 				for(int i = N - 1; i >= 0; i--) {
 					if(0 < map[i][x] && map[i][x] < 4) {
-						v[i][x] = true;
-						if(teams[teamMap[i][x] - 1].canMoveHead) {
-							score = getScore(i, x, 1);
-							teams[teamMap[i][x] - 1].canMoveHead = false;
-						} else {
-							score = getScore(i, x, 3);
-							teams[teamMap[i][x] - 1].canMoveHead = true;
-						}
+						score = getScore(i, x, teamMap[i][x] - 1);
 						break;
 					}
 				}
@@ -106,14 +91,7 @@ public class Main {
 				x = N - x - 1;
 				for(int i = N - 1; i >= 0; i--) {
 					if(0 < map[x][i]  && map[x][i] < 4) {
-						v[x][i] = true;
-						if(teams[teamMap[x][i] - 1].canMoveHead) {
-							score = getScore(x, i, 1);
-							teams[teamMap[x][i] - 1].canMoveHead = false;
-						} else {
-							score = getScore(x, i, 3);
-							teams[teamMap[x][i] - 1].canMoveHead = true;
-						}
+						score = getScore(x, i, teamMap[x][i] - 1);
 						break;
 					}
 				}
@@ -122,14 +100,7 @@ public class Main {
 				x = N - x - 1;
 				for(int i = 0; i < N; i++) {
 					if(0 < map[i][x] && map[i][x] < 4) {
-						v[i][x] = true;
-						if(teams[teamMap[i][x] - 1].canMoveHead) {
-							score = getScore(i, x, 1);
-							teams[teamMap[i][x]].canMoveHead = false;
-						} else {
-							score = getScore(i, x, 3);
-							teams[teamMap[i][x] - 1].canMoveHead = true;
-						}
+						score = getScore(i, x, teamMap[i][x] - 1);
 						break;
 					}
 				}
@@ -252,19 +223,28 @@ public class Main {
 		}
 	}
 	
-	static int getScore(int r, int c, int goal) {
-		if(map[r][c] == goal) {
-			return 1;
-		}
-		
-		for(int i = 0; i < 4; i++) {
-			int nr = r + dr[i];
-			int nc = c + dc[i];
-			if(0 <= nr && nr < N && 0 <= nc && nc < N && map[nr][nc] != 4 && map[nr][nc] != 0 && !v[nr][nc]) {
-				v[nr][nc] = true;
-				return 1 + getScore(nr, nc, goal);
+	static int getScore(int r, int c, int index) {
+		int result = 1;
+		if(teams[index].canMoveHead) {
+			Node node = teams[index].head;
+			while(true) {
+				if(node.r == r && node.c == c) {
+					teams[index].canMoveHead = false;
+					return result;
+				}
+				node = node.next;
+				result++;
+			}
+		} else {
+			Node node = teams[index].tail;
+			while(true) {
+				if(node.r == r && node.c == c) {
+					teams[index].canMoveHead = true;
+					return result;
+				}
+				node = node.prev;
+				result++;
 			}
 		}
-		return 0;
 	}
 }
