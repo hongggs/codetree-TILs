@@ -157,17 +157,33 @@ public class Main {
 			teams[index].tail = node;
 			return;
 		}
+		
+		ArrayList<int[]> list = new ArrayList<>();
 		for(int i = 0; i < 4; i++) {
 			int nr = node.r + dr[i];
 			int nc = node.c + dc[i];
 			if(0 <= nr && nr < N && 0 <= nc && nc < N && !v[nr][nc] && (map[nr][nc] == 2 || map[nr][nc] == 3)) {
-				v[nr][nc] = true;
-				Node newNode = new Node(nr, nc, map[nr][nc]);
-				node.next = newNode;
-				newNode.prev = node;
-				searchNext(index, newNode);
-				break;
+				list.add(new int[] {nr, nc});
 			}
+		}
+		
+		if(list.size() == 2) {
+			for(int i = 0; i < list.size(); i++) {
+				if(map[list.get(i)[0]][list.get(i)[1]] == 3) {
+					list.remove(i);
+					break;
+				}
+			}
+		}
+		
+		if(list.size() == 1) {
+			int nr = list.get(0)[0];
+			int nc = list.get(0)[1];
+			v[nr][nc] = true;
+			Node newNode = new Node(nr, nc, map[nr][nc]);
+			node.next = newNode;
+			newNode.prev = node;
+			searchNext(index, newNode);
 		}
 	}
 	
