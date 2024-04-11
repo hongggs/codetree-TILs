@@ -1,13 +1,14 @@
 import java.util.*;
 import java.io.*;
 public class Main {
-	static final int[] dr = {-1, 1, 0, 0};
-	static final int[] dc = {0, 0, -1, 1};
+	static final int[] dr = {-1, 1, 0, 0, -1, -1, 1, 1};
+	static final int[] dc = {0, 0, -1, 1, 1, -1, 1, -1};
 	static int N, M, K;
 	static int[][] map;
 	static Point[] players;
 	static Point exit;
-	static class Point implements Comparable<Point>{
+	static boolean[][] ch;
+	static class Point {
 		int r, c, w;
 
 		public Point(int r, int c) {
@@ -21,43 +22,6 @@ public class Main {
 			this.w = w;
 		}
 
-		@Override
-		public int hashCode() {
-			return Objects.hash(c, r);
-		}
-
-		@Override
-		public boolean equals(Object obj) {
-			if (this == obj)
-				return true;
-			if (obj == null)
-				return false;
-			if (getClass() != obj.getClass())
-				return false;
-			Point other = (Point) obj;
-			return c == other.c && r == other.r;
-		}
-
-		@Override
-		public int compareTo(Point o) {
-			if(o.w < w) {
-				return 1;
-			} else if(o.w == w) {
-				if(o.r < r) {
-					return 1;
-				} else if(o.r == r) {
-					if(o.c < c) {
-						return 1;
-					}
-				}
-			}
-			return -1;
-		}
-
-		@Override
-		public String toString() {
-			return "Point [r=" + r + ", c=" + c + ", w=" + w + "]";
-		}	
 	}
 	
 	public static void main(String[] args) throws Exception{
@@ -96,11 +60,11 @@ public class Main {
 	}
 	
 	static int solution() {
+		int remain = M;
 		int ans = 0;
 		int t = 0;
-		PriorityQueue<Point> pq;
 		while(t < K) {
-			pq = new PriorityQueue<>();
+			ch = new boolean[N][N];
 			//1.참가자 move
 			flag: for(int i = 0; i < M; i++) {
 				if(players[i].r == -1) {
@@ -118,6 +82,7 @@ public class Main {
 							if(dist == 0) {
 								players[i].r = -1;
 								ans++;
+								remain--;
 								continue flag;
 							}
 							nextR = nr;
@@ -125,17 +90,23 @@ public class Main {
 						}
 					}
 				}
+
 				if(players[i].r != nextR || players[i].c != nextC) {
 					ans++;
 				}
 				players[i].r = nextR;
 				players[i].c = nextC;
-				pq.offer(new Point(nextR, nextC, dist));
+				ch[nextR][nextC] = true;
 			}
+			
+			if(remain <= 0) {
+				return ans;
+			}
+			
 			
 			//2. 미로 회전
 			//	정사각형 구하기
-			Point p = pq.poll();
+			Point p = checkSquare();
 			int k = Math.max(Math.abs(p.r - exit.r) + 1, Math.abs(p.c - exit.c) + 1);
 			int sr = Math.min(exit.r, p.r) - (k - (Math.abs(exit.r - p.r) + 1));
 			if(sr < 0) {
@@ -176,6 +147,7 @@ public class Main {
 				}
 			}
 			
+			
 			for(int i = 0;  i < k; i++) {
 				for(int j = 0;  j < k; j++) {
 					map[sr + i][sc + j] = temp[i][j];
@@ -192,6 +164,48 @@ public class Main {
 			exit.c = newExit[1];
 			
 			t++;
+		}
+		return ans;
+	}
+	
+	static Point checkSquare() {
+		Queue<Point> q = new ArrayDeque<>();
+		Point ans = new Point(-1, -1, Integer.MAX_VALUE);
+		q.offer(exit);
+		boolean v[][] = new boolean[N][N];
+		while(!q.isEmpty()) {
+			Point now = q.poll();
+			if(now.w >= ans.w) {
+				break;
+			}
+			for(int i = 0; i < 8; i++) {
+				int nr = now.r + dr[i];
+				int nc = now.c + dc[i];
+				if(0 <= nr && nr < N && 0 <= nc && nc < N && !v[nr][nc]) {
+					v[nr][nc] = true;
+					if(ch[nr][nc]) {
+						if(now.w + 1 < ans.w) {
+							ans.w = now.w + 1;
+							ans.r = nr;
+							ans.c = nc;
+						} else if(now.w + 1 == ans.w) {
+							if(now.r < ans.r) {
+								ans.w = now.w + 1;
+								ans.r = nr;
+								ans.c = nc;
+							} else if(now.r == ans.r) {
+								if(now.c < ans.c) {
+									ans.w = now.w + 1;
+									ans.r = nr;
+									ans.c = nc;
+								}
+							}
+						}
+					} else {
+						q.offer(new Point(nr, nc, now.w + 1));
+					}
+				}
+			}
 		}
 		return ans;
 	}
