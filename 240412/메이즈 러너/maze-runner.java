@@ -2,13 +2,12 @@ import java.util.*;
 import java.io.*;
 
 public class Main {
-    static final int[] dr = {-1, 1, 0, 0, -1, -1, 1, 1};
-    static final int[] dc = {0, 0, -1, 1, -1, 1, 1, -1};
+    static final int[] dr = {-1, 1, 0, 0};
+    static final int[] dc = {0, 0, -1, 1};
     static int N, M, K;
     static int[][] map;
     static Point[] players;
     static Point exit;
-    static boolean[][] ch;
     static class Point {
         int r, c, w;
 
@@ -73,7 +72,6 @@ public class Main {
         int ans = 0;
         int t = 0;
         while(t < K) {
-            ch = new boolean[N][N];
             //1.참가자 move
             flag: for(int i = 0; i < M; i++) {
                 if(players[i].r == -1) {
@@ -105,7 +103,6 @@ public class Main {
                 }
                 players[i].r = nextR;
                 players[i].c = nextC;
-                ch[nextR][nextC] = true;
             }
 
             if(remain <= 0) {
