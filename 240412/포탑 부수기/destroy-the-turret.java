@@ -29,7 +29,7 @@ public class Main {
             }
         }
         solution();
-        int ans = Integer.MIN_VALUE;
+        int ans = 0;
         for(int i = 0; i < N; i++) {
             for(int j = 0; j < M; j++) {
                 ans = Math.max(ans, map[i][j][0]);
@@ -76,8 +76,8 @@ public class Main {
                 map[cp.r][cp.c][0] = Math.max(map[cp.r][cp.c][0] - damage, 0);
                 damage /= 2;
                 for(int i = 0; i < 8; i++) {
-                    int nr = validatePoint(cp.r + dr[i]);
-                    int nc = validatePoint(cp.c + dc[i]);
+                    int nr = validatePoint(cp.r + dr[i], N);
+                    int nc = validatePoint(cp.c + dc[i], M);
                     if(!v[nr][nc] && map[nr][nc][0] > 0) {
                         v[nr][nc] = true;
                         map[nr][nc][0] = Math.max(map[nr][nc][0]- damage, 0);
@@ -92,6 +92,7 @@ public class Main {
                     }
                 }
             }
+
             t++;
         }
 
@@ -106,7 +107,6 @@ public class Main {
             this.c = c;
             this.prev = prev;
         }
-
     }
     static Node doLaserAttack(Node start, Point target) { //bfs
         Queue<Node> q = new ArrayDeque<>();
@@ -116,8 +116,8 @@ public class Main {
         while(!q.isEmpty()) {
             Node now = q.poll();
             for(int i = 0; i < 4; i++) {
-                int nr = validatePoint(now.r + dr[i]);
-                int nc = validatePoint(now.c + dc[i]);
+                int nr = validatePoint(now.r + dr[i], N);
+                int nc = validatePoint(now.c + dc[i], M);
 
                 if(!v[nr][nc] && map[nr][nc][0] > 0) {
                     v[nr][nc] = true;
@@ -136,7 +136,7 @@ public class Main {
         Point ap = new Point(-1, -1);
         int min = Integer.MAX_VALUE;
         for(int i = 0; i < N; i++) {
-            for(int j = 0; j < N; j++) {
+            for(int j = 0; j < M; j++) {
                 if(0 < map[i][j][0] && map[i][j][0] < min) {
                     min = map[i][j][0];
                     ap.r = i;
@@ -170,7 +170,7 @@ public class Main {
         Point cp = new Point(-1, -1);
         int max = Integer.MIN_VALUE;
         for(int i = 0; i < N; i++) {
-            for(int j = 0; j < N; j++) {
+            for(int j = 0; j < M; j++) {
                 if(0 < map[i][j][0] && map[i][j][0] > max) {
                     max = map[i][j][0];
                     cp.r = i;
@@ -199,7 +199,7 @@ public class Main {
         return cp;
     }
 
-    static int validatePoint(int x) {
+    static int validatePoint(int x, int N) {
         if(x < 0) {
             return N - 1;
         } else if(x >= N) {
