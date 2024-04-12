@@ -58,7 +58,6 @@ public class Main {
             v[cp.r][cp.c] = true;
             map[ap.r][ap.c][0] += (N + M);
             map[ap.r][ap.c][1] = t;
-            map[cp.r][cp.c][1] = t;
             int damage = map[ap.r][ap.c][0];
 
             // 2)레이저공격
