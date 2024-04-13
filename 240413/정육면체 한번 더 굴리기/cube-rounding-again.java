@@ -26,46 +26,39 @@ public class Main {
     static int solution() {
         int ans = 0;
         int r = 0;
-        int c = 0;
+        int c = 1;
         int d = 0;
-        int[] dice = {3,2,4,5}; //우하좌상
-        int t = 0;
-        while(t < M) {
-            //1. 이동하기(다음 위치 구하기);
+        int[] dice = {1,2,6,5};
+        int cur = 3;
+        while(0 < M--) {
+            //점수얻기
+            v = new boolean[N][N];
+            cnt = 1;
+            v[r][c] = true;
+            getScore(r, c);
+            ans += (map[r][c] * cnt);
+
+
+            //다음 위치 구하기
+            if(cur > map[r][c]) {
+                d = (d + 1) % 4;
+            } else if(cur < map[r][c]) {
+                d = (d + 3) % 4;
+            }
             int nr = r + dr[d];
             int nc = c + dc[d];
-            //벽 만남
             if(0 > nr || nr >= N || 0 > nc || nc >= N) {
                 d = (d + 2) % 4;
                 nr = r + dr[d];
                 nc = c + dc[d];
             }
-
-            //2. 점수얻기
-            v = new boolean[N][N];
-            cnt = 1;
-            v[nr][nc] = true;
-            getScore(nr, nc);
-            ans += map[nr][nc] * cnt;
-
-            int cur = dice[d];
-            //3. 다음 위치 구하기
-            int nextD = -1;
-            if(cur > map[nr][nc]) {
-                nextD = (d + 1) % 4;
-            } else if(cur == map[nr][nc]) {
-                nextD = d;
-            } else {
-                nextD = (d + 3) % 4;
-            }
-
             r = nr;
             c = nc;
+
+            int next = dice[d];
             dice[(d + 2) % 4] = cur;
             dice[d] = 7 - cur;
-            d = nextD;
-
-            t++;
+            cur = next;
         }
         return ans;
     }
