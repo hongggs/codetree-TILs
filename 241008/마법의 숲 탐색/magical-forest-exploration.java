@@ -51,11 +51,11 @@ public class Main {
         C = Integer.parseInt(st.nextToken());
         K = Integer.parseInt(st.nextToken());
 
-        map = new int[R + 2][C];
+        map = new int[R + 3][C];
         spaces = new Space[K + 1];
         for(int i = 1; i <= K; i++) {
             st = new StringTokenizer(br.readLine().trim());
-            spaces[i] = new Space(0,
+            spaces[i] = new Space(1,
                 Integer.parseInt(st.nextToken()) - 1, Integer.parseInt(st.nextToken()));
         }
 
@@ -63,10 +63,9 @@ public class Main {
         for(int i = 1; i <= K; i++) {
             //[골렘 이동]
             moveSpace(i);
-
             //[숲이 꽉 찬지 확인]
-            if(spaces[i].r <= 2) {
-                map = new int[R + 2][C + 1];
+            if(spaces[i].r <= 3) {
+                map = new int[R + 3][C + 1];
                 continue;
             }
 
@@ -78,7 +77,6 @@ public class Main {
 
             //[정령 이동]
             ans += moveRobot(i);
-
         }
         System.out.println(ans);
     }
@@ -122,7 +120,7 @@ public class Main {
     }
 
     static boolean isValid(int r, int c) {
-        return 0 <= r && r < R + 2 && 0 <= c && c < C && map[r][c] == 0;
+        return 0 <= r && r < R + 3 && 0 <= c && c < C && map[r][c] == 0;
     }
 
     static int moveRobot(int index) {
@@ -136,7 +134,7 @@ public class Main {
             for(int i = 0; i < 4; i++) {
                 int nr = now[0] + dr[i];
                 int nc = now[1] + dc[i];
-                if(0 <= nr && nr < R + 2 && 0 <= nc && nc < C && map[nr][nc] > 0 && !v[map[nr][nc]]) {
+                if(0 <= nr && nr < R + 3 && 0 <= nc && nc < C && map[nr][nc] > 0 && !v[map[nr][nc]]) {
                     v[map[nr][nc]] = true;
                     result = Math.max(result, spaces[map[nr][nc]].r + 1);
                     q.offer(new int[]{spaces[map[nr][nc]].r + dr[spaces[map[nr][nc]].d],
@@ -144,12 +142,12 @@ public class Main {
                 }
             }
         }
-        return result - 1;
+        return result - 2;
 
     }
 
     static void print() {
-        for(int i = 0; i < R + 2; i++) {
+        for(int i = 0; i < R + 3; i++) {
             for(int j = 0; j < C; j++) {
                 System.out.print(map[i][j] + " ");
             }
