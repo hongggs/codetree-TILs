@@ -13,7 +13,7 @@ public class Main {
     static ArrayList<Monster> monsters;
     static Queue<Dead> deads;
     static int maxV;
-    static int[][] routes;
+    static int[] routes;
     static class Monster {
         int r, c, d;
 
@@ -47,7 +47,7 @@ public class Main {
         deadMap = new int[N][N];
         monsters = new ArrayList<>();
         deads = new ArrayDeque<>();
-        routes = new int[3][2];
+        routes = new int[3];
 
         for(int i = 0; i < M; i++) {
             st = new StringTokenizer(br.readLine().trim());
@@ -67,27 +67,24 @@ public class Main {
 
             //팩맨이동
             maxV = 0;
-            boolean[][] v = new boolean[N][N];
-            v[pr][pc] = true;
-            movePacman(0, pr, pc, new int[3][2], v, 0);
+            movePacman(0, pr, pc, new int[3], 0);
             if(maxV > 0) {
+                int r = pr;
+                int c = pc;
                 for(int i = 0; i < 3; i++) {
-                    int r = routes[i][0];
-                    int c = routes[i][1];
-                    int n = map[r][c];
-                    while(n-- > 0) {
-                        for(Monster m : monsters) {
-                            if (m.r == r && m.c == c) {
-                                m.r = -1;
-                                deads.offer(new Dead(r, c, 3));
-                                deadMap[r][c]++;
-                                map[r][c]--;
-                            }
+                    r = r + dr[routes[i]];
+                    c = c + dc[routes[i]];
+                    for(Monster m : monsters) {
+                        if (m.r == r && m.c == c) {
+                            m.r = -1;
+                            deads.offer(new Dead(r, c, 3));
+                            deadMap[r][c]++;
+                            map[r][c]--;
                         }
                     }
                 }
-                pr = routes[2][0];
-                pc = routes[2][1];
+                pr = r;
+                pc = c;
             }
 
             //몬스터 시체 소멸
@@ -153,13 +150,12 @@ public class Main {
         }
     }
 
-    static void movePacman(int index, int r, int c, int[][] tempRoutes, boolean[][] v, int sum) {
+    static void movePacman(int index, int r, int c, int[] tempRoutes, int sum) {
         if (index == 3) {
             if (sum > maxV) {
                 maxV = sum;
                 for (int i = 0; i < 3; i++) {
-                    routes[i][0] = tempRoutes[i][0];
-                    routes[i][1] = tempRoutes[i][1];
+                    routes[i] = tempRoutes[i];
                 }
             }
             return;
@@ -167,12 +163,12 @@ public class Main {
         for (int i = 0; i < 8; i += 2) {
             int nr = r + dr[i];
             int nc = c + dc[i];
-            if (0 <= nr && nr < N && 0 <= nc && nc < N && !v[nr][nc]) {
-                v[nr][nc] = true;
-                tempRoutes[index][0] = nr;
-                tempRoutes[index][1] = nc;
-                movePacman(index + 1, nr, nc, tempRoutes, v, sum + map[nr][nc]);
-                v[nr][nc] = false;
+            if (0 <= nr && nr < N && 0 <= nc && nc < N) {
+                int temp = map[nr][nc];
+                map[nr][nc] = 0;
+                tempRoutes[index] = i;
+                movePacman(index + 1, nr, nc, tempRoutes, sum + temp);
+                map[nr][nc] = temp;
             }
         }
     }
