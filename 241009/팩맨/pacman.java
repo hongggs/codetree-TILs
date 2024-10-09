@@ -68,24 +68,22 @@ public class Main {
             //팩맨이동
             maxV = 0;
             movePacman(0, pr, pc, new int[3], 0);
-            if(maxV > 0) {
-                int r = pr;
-                int c = pc;
-                for(int i = 0; i < 3; i++) {
-                    r = r + dr[routes[i]];
-                    c = c + dc[routes[i]];
-                    for(Monster m : monsters) {
-                        if (m.r == r && m.c == c) {
-                            m.r = -1;
-                            deads.offer(new Dead(r, c, 3));
-                            deadMap[r][c]++;
-                            map[r][c]--;
-                        }
+            int r = pr;
+            int c = pc;
+            for(int i = 0; i < 3; i++) {
+                r = r + dr[routes[i]];
+                c = c + dc[routes[i]];
+                for(Monster m : monsters) {
+                    if (m.r == r && m.c == c) {
+                        m.r = -1;
+                        deads.offer(new Dead(r, c, 3));
+                        deadMap[r][c]++;
+                        map[r][c]--;
                     }
                 }
-                pr = r;
-                pc = c;
             }
+            pr = r;
+            pc = c;
 
             //몬스터 시체 소멸
             int size = deads.size();
