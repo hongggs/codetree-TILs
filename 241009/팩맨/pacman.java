@@ -11,7 +11,6 @@ public class Main {
     static int pr, pc;
     static int[][] deadMap;
     static ArrayList<Monster> monsters;
-    static Queue<Dead> deads;
     static int maxV;
     static int[] routes;
     static class Monster {
@@ -24,15 +23,6 @@ public class Main {
         }
     }
 
-    static class Dead {
-        int r, c, time;
-
-        public Dead(int r, int c, int time) {
-            this.r = r;
-            this.c = c;
-            this.time = time;
-        }
-    }
     public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine().trim());
@@ -46,7 +36,6 @@ public class Main {
         map = new int[N][N];
         deadMap = new int[N][N];
         monsters = new ArrayList<>();
-        deads = new ArrayDeque<>();
         routes = new int[3];
 
         for(int i = 0; i < M; i++) {
@@ -66,18 +55,18 @@ public class Main {
             moveMonsters();
 
             //팩맨이동
-            maxV = 0;
+            maxV = -1;
             movePacman(0, pr, pc, new int[3], 0);
             int r = pr;
             int c = pc;
             for(int i = 0; i < 3; i++) {
-                r = r + dr[routes[i]];
-                c = c + dc[routes[i]];
+                r += dr[routes[i]];
+                c += dc[routes[i]];
+
                 for(Monster m : monsters) {
                     if (m.r == r && m.c == c) {
+                        deadMap[r][c] = 3;
                         m.r = -1;
-                        deads.offer(new Dead(r, c, 3));
-                        deadMap[r][c]++;
                         map[r][c]--;
                     }
                 }
@@ -86,14 +75,11 @@ public class Main {
             pc = c;
 
             //몬스터 시체 소멸
-            int size = deads.size();
-            while(size-- > 0) {
-                Dead d = deads.poll();
-                d.time--;
-                if(d.time == 0) {
-                    deadMap[d.r][d.c]--;
-                } else {
-                    deads.offer(d);
+            for(int i = 0; i < N; i++) {
+                for(int j = 0; j < N; j++) {
+                    if(deadMap[i][j] > 0) {
+                        deadMap[i][j]--;
+                    }
                 }
             }
 
@@ -172,8 +158,8 @@ public class Main {
     }
 
     static void print() {
-        for(int i = 0; i < N; i++) {
-            for(int j = 0; j < N; j++) {
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < N; j++) {
                 System.out.print(map[i][j] + " ");
             }
             System.out.println();
