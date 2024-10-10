@@ -9,7 +9,6 @@ public class Main {
     static int ans;
     static int[] exit;
     static int[][] players;
-    static int[][] playerMap;
     static int escape;
     public static void main(String[] args) throws Exception{
         /*
@@ -52,12 +51,10 @@ public class Main {
         }
 
         players = new int[M][2];
-        playerMap = new int[N][N];
         for(int i = 0; i < M; i++) {
             st = new StringTokenizer(br.readLine().trim());
             players[i][0] = Integer.parseInt(st.nextToken()) - 1;
             players[i][1] = Integer.parseInt(st.nextToken()) - 1;
-            playerMap[players[i][0]][players[i][1]]++;
         }
 
         exit = new int[2];
@@ -102,13 +99,10 @@ public class Main {
                 ans++;
                 next[0] += dr[dir];
                 next[1] += dc[dir];
-                playerMap[players[i][0]][players[i][1]]--;
                 players[i][0] = next[0];
                 players[i][1] = next[1];
-                playerMap[players[i][0]][players[i][1]]++;
             }
             if(next[0] == exit[0] && next[1] == exit[1]) {
-                playerMap[players[i][0]][players[i][1]]--;
                 players[i][0] = -1;
                 escape++;
             }
@@ -139,12 +133,10 @@ public class Main {
                     nextExit[0] = r + i;
                     nextExit[1] = c + j;
                 }
-                if(playerMap[or][oc] > 0) {
-                    for(int x = 0; x < M; x++) {
-                        if(or == players[x][0] && oc == players[x][1]) {
-                            playerMap[or][oc]--;
-                            updates.offer(new int[]{x, r + i, c + j});
-                        }
+
+                for(int x = 0; x < M; x++) {
+                    if(or == players[x][0] && oc == players[x][1]) {
+                        updates.offer(new int[]{x, r + i, c + j});
                     }
                 }
             }
@@ -160,7 +152,6 @@ public class Main {
             int[] update = updates.poll();
             players[update[0]][0] = update[1];
             players[update[0]][1] = update[2];
-            playerMap[update[1]][update[2]]++;
         }
     }
 
@@ -180,12 +171,13 @@ public class Main {
 
                     if(i <= exit[0] && exit[0] <= er && j <= exit[1] && exit[1] <= ec) {
                         boolean isPlayer = false;
-                        for (int a = i; a <= er; a++) {
-                            for (int b = j; b <= ec; b++) {
-                                if (playerMap[a][b] > 0) {
-                                    isPlayer = true;
-                                    break;
-                                }
+                        for(int p = 0; p < M; p++) {
+                            if(players[p][0] == -1) {
+                                continue;
+                            }
+                            if(i <= players[p][0] && players[p][0] <= er && j <= players[p][1] && players[p][1] <= ec) {
+                                isPlayer = true;
+                                break;
                             }
                         }
 
@@ -212,15 +204,6 @@ public class Main {
         for(int i = 0; i < N; i++) {
             for(int j = 0; j < N; j++) {
                 System.out.print(map[i][j] + " ");
-            }
-            System.out.println();
-        }
-        System.out.println();
-    }
-    static void printP() {
-        for(int i = 0; i < N; i++) {
-            for(int j = 0; j < N; j++) {
-                System.out.print(playerMap[i][j] + " ");
             }
             System.out.println();
         }
