@@ -124,7 +124,7 @@ public class Main {
         int c = arr[1];
         int v = arr[2];
         int[][] newMap = new int[v][v];
-        Queue<Integer> updates = new ArrayDeque<>();
+        Queue<int[]> updates = new ArrayDeque<>();
         int[] nextExit = new int[2];
 
         for(int i = 0; i < v; i++) {
@@ -143,9 +143,7 @@ public class Main {
                     for(int x = 0; x < M; x++) {
                         if(or == players[x][0] && oc == players[x][1]) {
                             playerMap[or][oc]--;
-                            players[x][0] = r + i;
-                            players[x][1] = c + j;
-                            updates.offer(x);
+                            updates.offer(new int[]{x, r + i, c + j});
                         }
                     }
                 }
@@ -159,8 +157,10 @@ public class Main {
         }
         exit = nextExit;
         while(!updates.isEmpty()) {
-            int x = updates.poll();
-            playerMap[players[x][0]][players[x][1]]++;
+            int[] update = updates.poll();
+            players[update[0]][0] = update[1];
+            players[update[0]][1] = update[2];
+            playerMap[update[1]][update[2]]++;
         }
     }
 
