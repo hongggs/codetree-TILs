@@ -66,8 +66,11 @@ public class Main {
         exit[1] = Integer.parseInt(st.nextToken()) - 1;
         escape = 0;
 
-        while(K-- > 0 && escape < M) {
+        while(K-- > 0) {
             movePlayers();
+            if(escape == M) {
+                break;
+            }
             rotateMap();
         }
         sb.append(ans).append("\n").append((exit[0] + 1) + " " + (exit[1] + 1));
@@ -114,12 +117,16 @@ public class Main {
 
     static void rotateMap() {
         int[] arr = getSquare();
+        if(arr[0] == -1) {
+            return;
+        }
         int r = arr[0];
         int c = arr[1];
         int v = arr[2];
         int[][] newMap = new int[v][v];
         Queue<Integer> updates = new ArrayDeque<>();
         int[] nextExit = new int[2];
+
         for(int i = 0; i < v; i++) {
             for(int j = 0; j < v; j++) {
                 int or = r + (v - 1) - j;
@@ -148,7 +155,6 @@ public class Main {
         for(int i = 0; i < v; i++) {
             for(int j = 0; j < v; j++) {
                 map[r + i][c + j] = newMap[i][j];
-
             }
         }
         exit = nextExit;
@@ -160,22 +166,23 @@ public class Main {
 
     static int[] getSquare() {
         int[] result = new int[3];
-        int minV = N;
+        result[0] = -1;
+        int minV = N + 1;
         for(int i = 0; i < N - 1; i++) {
             for(int j = 0; j < N - 1; j++) {
                 int temp = 2;
                 while(temp < N) {
                     int er = i + (temp - 1);
                     int ec = j + (temp - 1);
-                    if(0 > er || er >= N || 0 > ec || j + ec >= N) {
+                    if(0 > er || er >= N || 0 > ec || ec >= N) {
                         break;
                     }
 
                     if(i <= exit[0] && exit[0] <= er && j <= exit[1] && exit[1] <= ec) {
                         boolean isPlayer = false;
-                        for(int a = i; a<=er; a++) {
+                        for (int a = i; a <= er; a++) {
                             for (int b = j; b <= ec; b++) {
-                                if(playerMap[a][b] > 0) {
+                                if (playerMap[a][b] > 0) {
                                     isPlayer = true;
                                     break;
                                 }
