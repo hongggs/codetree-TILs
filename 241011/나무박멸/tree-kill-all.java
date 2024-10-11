@@ -134,7 +134,11 @@ public class Main {
             for(int k = 1; k <= K; k++) {
                 int nr = rr + k * dr[d];
                 int nc = rc + k * dc[d];
-                if(!isRange(nr, nc) || map[nr][nc] <= 0) {
+                if(!isRange(nr, nc) || map[nr][nc] == -1) {
+                    break;
+                }
+                if(map[nr][nc] == 0) {
+                    drug[nr][nc] = C + 1;
                     break;
                 }
                 map[nr][nc] = 0;
@@ -178,23 +182,4 @@ public class Main {
     static boolean isRange(int r, int c) {
         return 0 <= r && r < N && 0 <= c && c < N;
     }
-
-//    static void print() {
-//        System.out.println("트리");
-//        for(int i = 0; i < N; i++) {
-//            for(int j = 0; j < N; j++) {
-//                System.out.print(map[i][j] + " ");
-//            }
-//            System.out.println();
-//        }
-//    }
-//    static void printD() {
-//        System.out.println("약");
-//        for(int i = 0; i < N; i++) {
-//            for(int j = 0; j < N; j++) {
-//                System.out.print(drug[i][j] + " ");
-//            }
-//            System.out.println();
-//        }
-//    }
 }
