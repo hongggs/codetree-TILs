@@ -31,40 +31,31 @@ public class Main {
         int score = 0;
 
         int[][] group = new int[N][N];
-        HashMap<Integer, int[]> groupCountMap = new HashMap<>();
+        HashMap<Integer, Integer> groupCountMap = new HashMap<>();
         int index = 1;
         //그룹 구하기
         for(int i = 0; i < N; i++) {
             for(int j = 0; j < N; j++) {
                 if(group[i][j] == 0) {
-                    groupCountMap.put(index, new int[]{getGroup(i, j, group, index) + 1, map[i][j]});
+                    groupCountMap.put(index, getGroup(i, j, group, index) + 1);
                     index++;
                 }
             }
         }
         //점수 구하기
-        for(int k = 1; k < index; k++) {
-            int[] adjCount = new int[index];
-            for(int i = 0; i < N; i++) {
-                for(int j = 0; j < N; j++) {
-                    if(group[i][j] == k) {
-                        for(int d = 0; d < 4; d++) {
-                            int nr = i + dr[d];
-                            int nc = j + dc[d];
-                            if (0 <= nr && nr < N && 0 <= nc && nc < N && group[nr][nc] > k) {
-                                adjCount[group[nr][nc]]++;
-                            }
-                        }
+        for(int i = 0; i < N; i++) {
+            for(int j = 0; j < N; j++) {
+                for(int d = 0; d < 4; d++) {
+                    int nr = i + dr[d];
+                    int nc = j + dc[d];
+                    if (0 <= nr && nr < N && 0 <= nc && nc < N && group[nr][nc] != group[i][j]) {
+                        score += (groupCountMap.get(group[i][j]) + groupCountMap.get(group[nr][nc])) * map[i][j] * map[nr][nc];
+
                     }
                 }
             }
-            for(int i = 1; i < index; i++) {
-                if(adjCount[i] > 0) {
-                    score += (groupCountMap.get(k)[0] + groupCountMap.get(i)[0]) * groupCountMap.get(k)[1] * groupCountMap.get(i)[1] * adjCount[i];
-                }
-            }
         }
-        return score;
+        return score / 2;
     }
 
     static int getGroup(int r, int c, int[][] group, int mark) {
