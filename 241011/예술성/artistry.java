@@ -6,37 +6,11 @@ public class Main {
     static int N;
     static int[][] map;
     static int K = 3;
-    static Queue<int[]> adjPoints;
-    static int adjCnt;
     public static void main(String[] args) throws Exception {
-        /*
-        * 그림: n*n
-        * 한칸에 1이상 10이하의 숫자
-        * 예술성 점수: 모든 그룹 쌍의 조화로움의 합
-        *       (그룹 a에 속한 칸의 수 + 그룹 b에 속한 칸의 수 )
-        *           x 그룹 a를 이루고 있는 숫자 값 x 그룹 b를 이루고 있는 숫자 값
-        *           x 그룹 a와 그룹 b가 서로 맞닿아 있는 변의 수
-        * [예술성 점수 구하기]
-        *   - 그룹a 구하기
-        *       v2새로 생성, v1과 v2 방문체크하면서 움직이기
-        *       v1에 방문안했으면 해당 부분 이어진 구역 정하기 => 그룹a에 속한 칸의 수, 그룹a 숫자 값
-        *   - 그룹a과 인접한 그룹b구하기
-        *       v1, v2에 방문안하고 v1과 인접했으면 탐색 시작
-        *       이어진 부분 구하기 => 그룹b에 속한 칸의 수, 그룹b 숫자 값
-        *   - 그룹b와 서로 맞닿아 있는 변의 수 구하기
-        *       그룹a에서 그룹 b랑 맞닿아 끝난 부분 모두 조회
-        *
-        * [회전]
-        * 십자 모양 반시계 방향 회전
-        * 십자 모양 제외한 4개 정사각형 시계방향 90도씩 회전
-        *
-        * => 초기 예술점수 + 1회전 + 2회전 + 3회전
-        * */
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st;
         N = Integer.parseInt(br.readLine().trim());
         map = new int[N][N];
-        adjPoints = new ArrayDeque<>();
         for(int i = 0; i < N; i++) {
             st = new StringTokenizer(br.readLine().trim());
             for(int j = 0; j < N; j++) {
@@ -56,69 +30,52 @@ public class Main {
     static int getScore() {
         int score = 0;
 
-        int[][] main = new int[N][N];
+        int[][] group = new int[N][N];
+        HashMap<Integer, int[]> groupCountMap = new HashMap<>();
         int index = 1;
-        //그룹 a 구하기
+        //그룹 구하기
         for(int i = 0; i < N; i++) {
             for(int j = 0; j < N; j++) {
-                if(main[i][j] == 0) {
-                    boolean[][] sub = new boolean[N][N];
-                    int a = getSizeOfPaintMain(i, j, main, index) + 1;
-                    while(!adjPoints.isEmpty()) {
-                        int[] p = adjPoints.poll();
-                        if(sub[p[0]][p[1]]) {
-                            continue;
-                        }
-                        adjCnt = 0;
-                        int b = getSizeOfPaintSub(p[0], p[1], sub, main, index) + 1;
-//                        System.out.println("a = " + a);
-//                        System.out.println("b = " + b);
-//                        System.out.println("main = " + map[i][j]);
-//                        System.out.println("sub = " + map[p[0]][p[1]]);
-//                        System.out.println("adjCnt = " + adjCnt);
-                        score = score + ((a + b) * map[i][j] * map[p[0]][p[1]] * adjCnt);
-
-                    }
+                if(group[i][j] == 0) {
+                    groupCountMap.put(index, new int[]{getGroup(i, j, group, index) + 1, map[i][j]});
                     index++;
+                }
+            }
+        }
+        //점수 구하기
+        for(int k = 1; k < index; k++) {
+            int[] adjCount = new int[index];
+            for(int i = 0; i < N; i++) {
+                for(int j = 0; j < N; j++) {
+                    if(group[i][j] == k) {
+                        for(int d = 0; d < 4; d++) {
+                            int nr = i + dr[d];
+                            int nc = j + dc[d];
+                            if (0 <= nr && nr < N && 0 <= nc && nc < N && group[nr][nc] > k) {
+                                adjCount[group[nr][nc]]++;
+                            }
+                        }
+                    }
+                }
+            }
+            for(int i = 1; i < index; i++) {
+                if(adjCount[i] > 0) {
+                    score += (groupCountMap.get(k)[0] + groupCountMap.get(i)[0]) * groupCountMap.get(k)[1] * groupCountMap.get(i)[1] * adjCount[i];
                 }
             }
         }
         return score;
     }
 
-    static int getSizeOfPaintMain(int r, int c, int[][] v, int mark) {
+    static int getGroup(int r, int c, int[][] group, int mark) {
         int sum = 0;
-        v[r][c] = mark;
+        group[r][c] = mark;
 
         for(int i = 0; i < 4; i++) {
             int nr = r + dr[i];
             int nc = c + dc[i];
-            if(0 <= nr && nr < N && 0 <= nc && nc < N && v[nr][nc] == 0) {
-                if(map[nr][nc] == map[r][c]) {
-                    sum += (1 + getSizeOfPaintMain(nr, nc, v, mark));
-                } else {
-                    adjPoints.offer(new int[]{nr, nc});
-                }
-            }
-        }
-        return sum;
-    }
-
-    static int getSizeOfPaintSub(int r, int c, boolean[][] v, int[][] main, int mark) {
-        int sum = 0;
-        v[r][c] = true;
-
-        for(int i = 0; i < 4; i++) {
-            int nr = r + dr[i];
-            int nc = c + dc[i];
-            if(0 <= nr && nr < N && 0 <= nc && nc < N && !v[nr][nc]) {
-                if(map[nr][nc] == map[r][c]) {
-                    sum += (1 + getSizeOfPaintSub(nr, nc, v, main, mark));
-                } else {
-                    if(main[nr][nc] == mark) {
-                        adjCnt++;
-                    }
-                }
+            if(0 <= nr && nr < N && 0 <= nc && nc < N && group[nr][nc] == 0 && map[nr][nc] == map[r][c]) {
+                sum += (1 + getGroup(nr, nc, group, mark));
             }
         }
         return sum;
