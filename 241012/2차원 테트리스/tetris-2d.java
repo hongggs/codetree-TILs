@@ -169,7 +169,7 @@ public class Main {
 		int cnt = 0;
 		if(red[r][0] == 1 && red[r][1] == 1) {
 			cnt = 2;
-		} else if(red[r][1] == 1 && red[r + 1][1] == 1) {
+		} else if(r + 1 < N && red[r][1] == 1 && red[r + 1][1] == 1) {
 			cnt = 1;
 		} else if(red[r][1] == 1) {
 			cnt = 1;
@@ -199,7 +199,7 @@ public class Main {
 		int cnt = 0;
 		if(yellow[0][c] == 1 && yellow[1][c] == 1) {
 			cnt = 2;
-		} else if(yellow[1][c] == 1 && yellow[1][c + 1] == 1) {
+		} else if(c + 1 < N && yellow[1][c] == 1 && yellow[1][c + 1] == 1) {
 			cnt = 1;
 		} else if(yellow[1][c] == 1) {
 			cnt = 1;
