@@ -37,18 +37,12 @@ public class Main {
 				score++;
 			}
 			removeRangeRed(r, c);
-			while(bombRed()) {
-				score++;
-			}
 			
 			moveYellow(t, 0, c);
 			while(bombYellow()) {
 				score++;
 			}
 			removeRangeYellow(r, c);
-			while(bombYellow()) {
-				score++;
-			}
 						
 		}
 		int cnt = 0;
